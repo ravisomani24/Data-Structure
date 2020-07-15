@@ -2,10 +2,10 @@
 using namespace std;
 
 //First is to create a linked list node
-typedef struct Node {
+struct Node {
     int data;
     Node* next;
-}Node;
+};
 
 Node* head = NULL; // Head pointer initially points to null
 int lengthOfLinkedList = 0; // To calculate the length of linked list. This will be helpful for inserting at any position cases and also for
@@ -65,13 +65,13 @@ void insertAtEnd(int data) {
 void insertAtAnyPosition(int data, int position) {
 
     Node* temp = head;
-    Node* nodePtr = createNode(data);
     if(position == 1) 
         insertAtBeginning(data);
-    else if(position == lengthOfLinkedList)
+    else if(position == lengthOfLinkedList + 1)
         insertAtEnd(data);
-    else if(position < lengthOfLinkedList) {
+    else if(position <= lengthOfLinkedList) {
 
+        Node* nodePtr = createNode(data);
         for(int i = 0; i < position - 2; i++)
                 temp = temp->next;
 
@@ -203,16 +203,74 @@ int searchValueInList(int searchValue) {
 //Reverse a Linked List
 void reverseLinkedList() {
 
+    Node* current, *previous, *temp;
 
+    if(head == NULL) {
+
+        cout << "There is nothing in list to reverse\n";
+        return;
+
+    } else if(head->next == NULL)
+        return; // Only one node in the list 
+
+    previous = NULL;
+    current = head;
+    temp = current->next;
+
+    while(current->next != NULL) {
+
+        current->next = previous;
+        previous = current;
+        current = temp;
+        temp = current->next;
+
+    }
+
+    current->next = previous;
+    head = current;
+
+}
+
+//Reverse a Linked List Recursively
+void recursiveReverse(int len) {
+
+    if(len == 1)
+        return;
+
+    Node* traversePtr = head;
+    while(traversePtr->next->next != NULL)
+        traversePtr = traversePtr->next;
+
+    Node* getLastNode = createNode(traversePtr->next->data);
+    lengthOfLinkedList--; 
+    traversePtr->next = NULL;
+    recursiveReverse(--len);
+
+    getLastNode->next = head;
+    head = getLastNode;
 
 }
 
 
 //Middle of Linked List
-void middleOfLinkedList() {
+int middleOfLinkedList() {
 
+    if(lengthOfLinkedList == 0) {
 
+        cout << "The list is empty.\n";
+        return 0;
 
+    } 
+
+    Node* fastPtr = head, *slowPtr = head;
+    while(fastPtr->next != NULL && fastPtr->next->next != NULL) {
+
+        fastPtr = fastPtr->next->next;
+        slowPtr = slowPtr->next;
+
+    }
+
+    return slowPtr->data;
 }
 
 void display() {
@@ -247,10 +305,10 @@ int main()
         char ans;
         cout << "Which operation would you like to perform?\n1.Insert value at beginning.\n2.Insert value at end.\n3.Insert value at any position.\n";
         cout << "4.Delete first node from list.\n5.Delete last node from the list.\n6.Delete node of any position.\n7.Search value in the list.\n";
-        cout << "8.Exit\n";
+        cout << "8.Reverse the list.\n9.Reverse the linked list in recursion.\n10.Get middle Element of Linked List.\n11.Exit.\n";
         cin >> optionSelectedByUser;
 
-        if(optionSelectedByUser > 7)
+        if(optionSelectedByUser > 10)
             break;
         switch (optionSelectedByUser)
         {
@@ -306,6 +364,31 @@ int main()
                 cout << "The value " << valueToFind << " is not present in the list.\n";
             else
                 cout << "The value " << valueToFind << " is at position " << location << " in the list.\n";
+            break;
+
+        case 8:
+            reverseLinkedList();
+            display();
+            break;
+
+        case 9:
+            if(lengthOfLinkedList == 0) {
+
+                cout << "There is nothing in the list to reverse\n";
+                break;
+
+            } else if(lengthOfLinkedList == 1)
+                break;
+
+            recursiveReverse(lengthOfLinkedList);
+            display();
+            break;
+
+        case 10:
+            int value = middleOfLinkedList();
+            if(value == 0)
+                break;
+            cout << "The middle Element of Linked List is " << value << endl;
             break;
 
         }
